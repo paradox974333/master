@@ -1,9 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#1a237e">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="manifest" href="/manifest.json">
     <title>NoFap Support</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" rel="stylesheet">
     <style>
@@ -784,5 +788,18 @@
             return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
         }
     </script>
+    <script>
+        if ('serviceWorker' in navigator) {
+          window.addEventListener('load', function() {
+            navigator.serviceWorker.register('/service-worker.js')
+              .then(function(registration) {
+                console.log('ServiceWorker registration successful');
+              })
+              .catch(function(err) {
+                console.log('ServiceWorker registration failed: ', err);
+              });
+          });
+        }
+      </script>
 </body>
 </html>
