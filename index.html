@@ -1,0 +1,787 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NoFap Support</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #1a237e;
+            --secondary: #303f9f;
+            --accent: #7c4dff;
+            --success: #43a047;
+            --warning: #ff9800;
+            --danger: #e53935;
+            --text: #ffffff;
+            --background: #121212;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+        }
+
+        body {
+            background-color: var(--background);
+            color: var(--text);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            padding: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 1000;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        .navbar h1 {
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+
+        .menu-btn {
+            background: none;
+            border: none;
+            color: var(--text);
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 0.5rem;
+        }
+
+        .side-menu {
+            position: fixed;
+            top: 0;
+            right: -280px;
+            width: 280px;
+            height: 100vh;
+            background: var(--primary);
+            padding: 5rem 1rem;
+            transform: translateX(0);
+            transition: transform 0.3s ease-in-out;
+            z-index: 999;
+        }
+
+        .side-menu.active {
+            transform: translateX(-280px);
+        }
+
+        .menu-item {
+            display: flex;
+            align-items: center;
+            padding: 1rem;
+            color: var(--text);
+            text-decoration: none;
+            border-radius: 8px;
+            margin-bottom: 0.5rem;
+            transition: background 0.3s ease;
+        }
+
+        .menu-item:hover {
+            background: var(--secondary);
+        }
+
+        .container {
+            padding: 5rem 1rem 1rem;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .card {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-radius: 16px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .streak-card {
+            text-align: center;
+        }
+
+        .streak-number {
+            font-size: 3rem;
+            font-weight: bold;
+            margin: 1rem 0;
+        }
+
+        .streak-label {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 4px;
+            margin: 1rem 0;
+            overflow: hidden;
+        }
+
+        .progress-bar-fill {
+            height: 100%;
+            background: var(--accent);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .btn {
+            background: var(--accent);
+            color: var(--text);
+            border: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 8px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: transform 0.2s ease, background 0.2s ease;
+            width: 100%;
+            margin: 0.5rem 0;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            background: var(--secondary);
+        }
+
+        .btn.success { background: var(--success); }
+        .btn.warning { background: var(--warning); }
+        .btn.danger { background: var(--danger); }
+
+        .breathing-circle {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            background: var(--accent);
+            margin: 2rem auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            font-size: 1.2rem;
+            transition: transform 4s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
+        }
+
+        .breathing-instruction {
+            font-size: 1rem;
+            margin-top: 0.5rem;
+            text-align: center;
+        }
+
+        .breathing-circle.inhale {
+            animation: inhale 4s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+        }
+
+        .breathing-circle.hold {
+            animation: hold 7s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+        }
+
+        .breathing-circle.exhale {
+            animation: exhale 8s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+        }
+
+        @keyframes inhale {
+            from { transform: scale(1); background-color: var(--accent); }
+            to { transform: scale(1.5); background-color: var(--success); }
+        }
+
+        @keyframes hold {
+            from { transform: scale(1.5); background-color: var(--success); }
+            to { transform: scale(1.5); background-color: var(--warning); }
+        }
+
+        @keyframes exhale {
+            from { transform: scale(1.5); background-color: var(--warning); }
+            to { transform: scale(1); background-color: var(--accent); }
+        }
+
+        .journal-entry {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 1rem;
+            margin: 1rem 0;
+            border-radius: 8px;
+        }
+
+        .journal-entry .date {
+            font-size: 0.8rem;
+            opacity: 0.7;
+            margin-bottom: 0.5rem;
+        }
+
+        .journal-entry .content {
+            margin: 0.5rem 0;
+            white-space: pre-wrap;
+        }
+
+        .journal-entry .mood {
+            font-size: 1.2rem;
+            margin: 0.5rem 0;
+        }
+
+        .achievements-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .achievement {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 1rem;
+            border-radius: 8px;
+            text-align: center;
+            transition: background-color 0.3s ease;
+        }
+
+        .achievement.unlocked {
+            background: var(--success);
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            background: var(--accent);
+            margin-top: 0.5rem;
+        }
+
+        .notification {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 1rem 2rem;
+            border-radius: 8px;
+            background: var(--accent);
+            color: var(--text);
+            z-index: 1002;
+            animation: slideUp 0.5s ease-out;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .notification.success { background: var(--success); }
+        .notification.warning { background: var(--warning); }
+        .notification.info { background: var(--accent); }
+
+        @keyframes slideUp {
+            from { transform: translate(-50%, 100%); }
+            to { transform: translate(-50%, 0); }
+        }
+
+        .emergency-modal {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: var(--primary);
+            padding: 2rem;
+            border-radius: 16px;
+            width: 90%;
+            max-width: 400px;
+            display: none;
+            z-index: 1001;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+        }
+
+        .emergency-modal.active {
+            display: block;
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.8);
+            display: none;
+            z-index: 1000;
+        }
+
+        .overlay.active {
+            display: block;
+        }
+
+        textarea {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            color: var(--text);
+            border-radius: 8px;
+            padding: 1rem;
+            margin: 1rem 0;
+            resize: vertical;
+            min-height: 100px;
+            font-size: 1rem;
+        }
+
+        textarea:focus {
+            outline: none;
+            box-shadow: 0 0 0 2px var(--accent);
+        }
+
+        .quick-actions {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        @media (max-width: 480px) {
+            .quick-actions {
+                grid-template-columns: 1fr;
+            }
+            
+            .container {
+                padding: 4rem 0.5rem 1rem;
+            }
+        }
+
+        h2 {
+            margin-bottom: 1rem;
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <h1>NoFap Support</h1>
+        <button class="menu-btn" onclick="toggleMenu()">☰</button>
+    </nav>
+
+    <div class="side-menu">
+        <a href="#" class="menu-item" onclick="showSection('home')">🏠 Home</a>
+        <a href="#" class="menu-item" onclick="showSection('achievements')">🏆 Achievements</a>
+        <a href="#" class="menu-item" onclick="showSection('journal')">📓 Journal</a>
+        <a href="#" class="menu-item" onclick="showSection('community')">👥 Community</a>
+    </div>
+
+    <div class="container">
+        <section id="home" class="section">
+            <div class="card streak-card">
+                <div class="streak-number">0</div>
+                <div class="streak-label">Days Clean</div>
+                <div class="progress-bar">
+                    <div class="progress-bar-fill"></div>
+                </div>
+                <button class="btn success" onclick="checkIn()">Check In Today</button>
+            </div>
+
+            <div class="card">
+                <h2>Quick Actions</h2>
+                <div class="quick-actions">
+                    <button class="btn danger" onclick="startEmergencyMode()">Emergency</button>
+                    <button class="btn" onclick="startBreathing()">Breathe</button>
+                    <button class="btn warning" onclick="startExercise()">Exercise</button>
+                    <button class="btn" onclick="showSection('journal')">Journal</button>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>Breathing Exercise</h2>
+                <div class="breathing-circle">
+                    <span id="breathing-timer">Start</span>
+                    <span class="breathing-instruction">Click to begin</span>
+                </div>
+            </div>
+        </section>
+
+        <section id="achievements" class="section" style="display: none;">
+            <div class="card">
+                <h2>Achievements</h2>
+                <div class="achievements-grid">
+                    <!-- Will be populated by JavaScript -->
+                </div>
+            </div>
+        </section>
+
+        <section id="journal" class="section" style="display: none;">
+            <div class="card">
+                <h2>Journal</h2>
+                <textarea placeholder="Write your thoughts..." rows="5"></textarea>
+                <button class="btn" onclick="saveJournalEntry()">Save Entry</button>
+            </div>
+            <div class="entries-container">
+                <!-- Will be populated by JavaScript -->
+            </div>
+        </section>
+
+        <section id="community" class="section" style="display: none;">
+            <div class="card">
+                <h2>Community</h2>
+                <p>Join 10,000+ others on their journey</p>
+                <button class="btn">Connect Now</button>
+            </div>
+        </section>
+    </div>
+
+    <div class="emergency-modal">
+        <h2>Emergency Help</h2>
+        <p>Take a deep breath. You're stronger than your urges.</p>
+        <div class="quick-actions">
+            <button class="btn" onclick="startBreathing()">Start Breathing</button>
+            <button class="btn warning" onclick="startExercise()">Do Pushups</button>
+            <button class="btn" onclick="takeColdShower()">Cold Shower</button>
+            <button class="btn" onclick="closeEmergencyModal()">I Feel Better</button>
+        </div>
+    </div>
+
+    <div class="overlay"></div>
+
+    
+
+    <script>
+        // Global variables
+        let streak = 0;
+        let lastCheckIn = null;
+        let breathingInterval = null;
+        let journalEntries = [];
+        let currentView = 'home';
+        let emergencyModeActive = false;
+
+        // Constants
+        const BREATHING_CYCLES = 3;
+        const BREATHING_PHASES = {
+            INHALE: { duration: 4, instruction: 'Inhale slowly...', className: 'inhale' },
+            HOLD: { duration: 7, instruction: 'Hold...', className: 'hold' },
+            EXHALE: { duration: 8, instruction: 'Exhale slowly...', className: 'exhale' }
+        };
+
+        const ACHIEVEMENTS = [
+            { days: 1, name: "First Day Complete!", description: "You've taken the first step!" },
+            { days: 7, name: "One Week Strong!", description: "A whole week of strength!" },
+            { days: 30, name: "30 Day Master!", description: "You're building a new life!" },
+            { days: 90, name: "90 Day Champion!", description: "You've reached the milestone!" }
+        ];
+
+        const EMERGENCY_EXERCISES = [
+            { name: "Push-ups", reps: 20, duration: 120 },
+            { name: "Squats", reps: 30, duration: 180 },
+            { name: "Jumping Jacks", reps: 50, duration: 150 },
+            { name: "Plank", reps: 1, duration: 60 },
+            { name: "Mountain Climbers", reps: 40, duration: 90 }
+        ];
+
+        // Initialize application
+        document.addEventListener('DOMContentLoaded', () => {
+            initializeApp();
+        });
+
+        function initializeApp() {
+            loadSavedData();
+            setupEventListeners();
+            updateStreakDisplay();
+            loadJournalEntries();
+            updateAchievementsDisplay();
+        }
+
+        // Data Management
+        function loadSavedData() {
+            streak = parseInt(localStorage.getItem('streak')) || 0;
+            lastCheckIn = localStorage.getItem('lastCheckIn');
+            journalEntries = JSON.parse(localStorage.getItem('journalEntries')) || [];
+            emergencyModeActive = false;
+        }
+
+        function saveData() {
+            localStorage.setItem('streak', streak);
+            localStorage.setItem('lastCheckIn', lastCheckIn);
+            localStorage.setItem('journalEntries', JSON.stringify(journalEntries));
+        }
+
+        // Event Listeners
+        function setupEventListeners() {
+            document.querySelector('.menu-btn').addEventListener('click', toggleMenu);
+            document.querySelector('.breathing-circle').addEventListener('click', startBreathing);
+            document.querySelector('textarea')?.addEventListener('input', autoSaveJournal);
+            document.querySelectorAll('.btn.danger').forEach(btn => {
+                btn.addEventListener('click', startEmergencyMode);
+            });
+            document.querySelector('.overlay').addEventListener('click', closeEmergencyModal);
+            document.addEventListener('click', handleOutsideClicks);
+        }
+
+        // Navigation Functions
+        function toggleMenu() {
+            const sideMenu = document.querySelector('.side-menu');
+            sideMenu.classList.toggle('active');
+        }
+        document.addEventListener('DOMContentLoaded', () => {
+            // Add menu button click listener
+            const menuBtn = document.querySelector('.menu-btn');
+            if (menuBtn) {
+                menuBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    toggleMenu();
+                });
+            }
+
+            // Add click outside listener
+            document.addEventListener('click', (e) => {
+                const sideMenu = document.querySelector('.side-menu');
+                const menuBtn = document.querySelector('.menu-btn');
+                
+                if (!sideMenu.contains(e.target) && !menuBtn.contains(e.target)) {
+                    sideMenu.classList.remove('active');
+                }
+            });
+
+            // Initialize other features
+            initializeApp();
+        });
+
+        function showSection(sectionId) {
+            currentView = sectionId;
+            document.querySelectorAll('.section').forEach(section => {
+                section.style.display = 'none';
+            });
+            document.getElementById(sectionId).style.display = 'block';
+            toggleMenu();
+        }
+
+        // Streak Management
+        function checkIn() {
+            const today = new Date();
+            const todayDate = today.toDateString();
+            
+            if (!lastCheckIn || new Date(lastCheckIn).toDateString() !== todayDate) {
+                streak++;
+                lastCheckIn = today.toISOString();
+                saveData();
+                updateStreakDisplay();
+                checkAchievements();
+                showNotification("Keep going strong! 💪", "success");
+            } else {
+                showNotification("You've already checked in today!", "info");
+            }
+        }
+
+        function updateStreakDisplay() {
+            const streakNumber = document.querySelector('.streak-number');
+            const progressBar = document.querySelector('.progress-bar-fill');
+            
+            streakNumber.textContent = streak;
+            const progress = (streak % 7) * (100/7);
+            progressBar.style.width = `${progress}%`;
+        }
+
+        // Breathing Exercise
+        function startBreathing() {
+            if (breathingInterval) {
+                stopBreathing();
+                return;
+            }
+
+            const circle = document.querySelector('.breathing-circle');
+            const timer = document.getElementById('breathing-timer');
+            const instruction = document.querySelector('.breathing-instruction');
+            let currentPhase = 'INHALE';
+            let currentCycle = 0;
+            let timeLeft = BREATHING_PHASES[currentPhase].duration;
+
+            breathingInterval = setInterval(() => {
+                timeLeft--;
+                timer.textContent = timeLeft;
+                
+                if (timeLeft <= 0) {
+                    if (currentPhase === 'EXHALE') {
+                        currentCycle++;
+                        if (currentCycle >= BREATHING_CYCLES) {
+                            stopBreathing();
+                            showNotification("Great job completing the breathing exercise!", "success");
+                            return;
+                        }
+                        currentPhase = 'INHALE';
+                    } else if (currentPhase === 'INHALE') {
+                        currentPhase = 'HOLD';
+                    } else {
+                        currentPhase = 'EXHALE';
+                    }
+                    
+                    timeLeft = BREATHING_PHASES[currentPhase].duration;
+                    circle.className = `breathing-circle ${BREATHING_PHASES[currentPhase].className}`;
+                    instruction.textContent = BREATHING_PHASES[currentPhase].instruction;
+                }
+            }, 1000);
+
+            circle.className = `breathing-circle ${BREATHING_PHASES.INHALE.className}`;
+            instruction.textContent = BREATHING_PHASES.INHALE.instruction;
+        }
+
+        function stopBreathing() {
+            clearInterval(breathingInterval);
+            breathingInterval = null;
+            
+            const circle = document.querySelector('.breathing-circle');
+            const timer = document.getElementById('breathing-timer');
+            const instruction = document.querySelector('.breathing-instruction');
+            
+            circle.className = 'breathing-circle';
+            timer.textContent = 'Start';
+            instruction.textContent = 'Click to begin';
+        }
+
+        // Emergency Mode
+        function startEmergencyMode() {
+            emergencyModeActive = true;
+            showEmergencyModal();
+            suggestEmergencyExercise();
+        }
+
+        function showEmergencyModal() {
+            document.querySelector('.emergency-modal').classList.add('active');
+            document.querySelector('.overlay').classList.add('active');
+        }
+
+        function closeEmergencyModal() {
+            document.querySelector('.emergency-modal').classList.remove('active');
+            document.querySelector('.overlay').classList.remove('active');
+            emergencyModeActive = false;
+        }
+
+        function suggestEmergencyExercise() {
+            const exercise = EMERGENCY_EXERCISES[Math.floor(Math.random() * EMERGENCY_EXERCISES.length)];
+            showNotification(`Do ${exercise.reps} ${exercise.name} right now!`, "warning");
+            startExerciseTimer(exercise.duration);
+        }
+
+        function startExercise() {
+            const exercise = EMERGENCY_EXERCISES[Math.floor(Math.random() * EMERGENCY_EXERCISES.length)];
+            showNotification(`Challenge: ${exercise.reps} ${exercise.name}! Start now!`, "warning");
+            startExerciseTimer(exercise.duration);
+        }
+
+        function takeColdShower() {
+            showNotification("Take a cold shower for at least 1 minute!", "warning");
+            startExerciseTimer(60);
+        }
+
+        function startExerciseTimer(duration) {
+            let timeLeft = duration;
+            const timerInterval = setInterval(() => {
+                timeLeft--;
+                if (timeLeft <= 0) {
+                    clearInterval(timerInterval);
+                    showNotification("Exercise complete! Great work!", "success");
+                }
+            }, 1000);
+        }
+
+        // Journal Management
+        function saveJournalEntry() {
+            const textarea = document.querySelector('textarea');
+            if (!textarea.value.trim()) return;
+
+            const entry = {
+                id: Date.now(),
+                date: new Date().toISOString(),
+                content: textarea.value,
+                mood: getCurrentMood()
+            };
+            
+            journalEntries.unshift(entry);
+            saveData();
+            textarea.value = '';
+            loadJournalEntries();
+            showNotification("Journal entry saved!", "success");
+        }
+
+        function autoSaveJournal(e) {
+            const content = e.target.value;
+            localStorage.setItem('journal_draft', content);
+        }
+
+        function loadJournalEntries() {
+            const entriesContainer = document.querySelector('.entries-container');
+            if (!entriesContainer) return;
+
+            entriesContainer.innerHTML = journalEntries.map(entry => `
+                <div class="journal-entry">
+                    <div class="date">${new Date(entry.date).toLocaleDateString()}</div>
+                    <div class="content">${entry.content}</div>
+                    <div class="mood">${entry.mood}</div>
+                    <button onclick="deleteJournalEntry(${entry.id})" class="btn danger">Delete</button>
+                </div>
+            `).join('');
+        }
+
+        function deleteJournalEntry(id) {
+            journalEntries = journalEntries.filter(entry => entry.id !== id);
+            saveData();
+            loadJournalEntries();
+            showNotification("Journal entry deleted", "info");
+        }
+
+        // Achievement System
+        function checkAchievements() {
+            ACHIEVEMENTS.forEach(achievement => {
+                if (streak === achievement.days) {
+                    unlockAchievement(achievement);
+                }
+            });
+        }
+
+        function unlockAchievement(achievement) {
+            showNotification(`🏆 Achievement Unlocked: ${achievement.name}`, "success");
+            updateAchievementsDisplay();
+        }
+
+        function updateAchievementsDisplay() {
+            const achievementsContainer = document.querySelector('.achievements-grid');
+            if (!achievementsContainer) return;
+
+            achievementsContainer.innerHTML = ACHIEVEMENTS.map(achievement => `
+                <div class="achievement ${streak >= achievement.days ? 'unlocked' : ''}">
+                    <h3>${achievement.name}</h3>
+                    <div class="badge">${achievement.days} Days</div>
+                    <p>${achievement.description}</p>
+                </div>
+            `).join('');
+        }
+
+        // Utility Functions
+        function showNotification(message, type = 'info') {
+            const notification = document.createElement('div');
+            notification.className = `notification ${type}`;
+            notification.textContent = message;
+            
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.remove();
+            }, 3000);
+        }
+
+        function getCurrentMood() {
+            const moods = ['😊', '😐', '😔', '😤', '💪'];
+            return moods[Math.floor(Math.random() * moods.length)];
+        }
+
+        function handleOutsideClicks(e) {
+            if (!e.target.closest('.side-menu') && !e.target.closest('.menu-btn')) {
+                document.querySelector('.side-menu').classList.remove('active');
+            }
+        }
+
+        function formatTime(seconds) {
+            const minutes = Math.floor(seconds / 60);
+            const remainingSeconds = seconds % 60;
+            return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
+        }
+    </script>
+</body>
+</html>
