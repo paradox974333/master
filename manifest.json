@@ -2,7 +2,7 @@
     "name": "NoFap Support",
     "short_name": "NoFap",
     "description": "Your personal companion for maintaining and tracking your NoFap journey",
-    "start_url": "/",
+    "start_url": "/index.html",
     "display": "standalone",
     "background_color": "#121212",
     "theme_color": "#1a237e",
